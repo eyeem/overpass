@@ -1,0 +1,31 @@
+service: kube-deployer # NOTE: update this with your service name
+
+provider:
+  name: aws
+  runtime: python3.7
+  region: eu-west-1
+  iamRoleStatements:
+    -  Effect: "Allow"
+       Action:
+         - "sts:GetCallerIdentity"
+       Resource:
+         - "*"
+    -  Effect: "Allow"
+       Action:
+         - "eks:DescribeCluster"
+       Resource:
+         - "*"
+  timeout: 45
+  vpc:
+    securityGroupIds:
+      - sg-72d81c0a
+    subnetIds:
+      - subnet-6f63c636
+      - subnet-7902820e
+      - subnet-ac1574c9
+functions:
+  kubeDeploy:
+    handler: handler.handler
+    
+plugins:
+  - serverless-python-requirements

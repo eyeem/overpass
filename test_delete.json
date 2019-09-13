@@ -1,0 +1,12 @@
+{
+  "RequestType": "Delete",
+  "ResponseURL": "http://0.0.0.0:8000",
+  "StackId": "arn:aws:cloudformation:eu-west-1:123456789012:stack/MyStack/guid",
+  "RequestId": "unique id for this create request",
+  "ResourceType": "Custom::TestResource",
+  "LogicalResourceId": "MyTestResource",
+  "ResourceProperties": {
+    "yaml": "---\n{apiVersion: apps/v1, kind: Deployment, metadata: {name: mysqldb, labels: {app: mysqldb}}, spec: {replicas: 1, selector: {matchLabels: {app: mysqldb}}, template: {metadata: {labels: {app: mysqldb}}, spec: {containers: [{name: mysqldb, image: '997382128666.dkr.ecr.eu-west-1.amazonaws.com/eyeem-mysql:latest', ports: [{containerPort: 3306, name: mysql}]}]}}}}\n---\n{apiVersion: v1,kind: Namespace, metadata: { annotations: {}, labels: {}, name: nightly}}",
+    "namespace": "nightly"
+  }
+}
