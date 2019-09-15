@@ -22,7 +22,7 @@ provider:
     subnetIds:
       - subnet-6f63c636
       - subnet-7902820e
-      - subnet-ac1574c9
+      - subnet-1bed767e
 functions:
   kubeDeploy:
     handler: handler.handler
