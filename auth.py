@@ -2,12 +2,10 @@ import base64
 import re
 
 import boto3
-import string
-import random
 from botocore.signers import RequestSigner
 
-class EKSAuth(object):
 
+class EKSAuth(object):
     METHOD = 'GET'
     EXPIRES = 60
     EKS_HEADER = 'x-k8s-aws-id'
@@ -24,8 +22,8 @@ class EKSAuth(object):
         Return bearer token
         """
         session = boto3.session.Session()
-        #Get ServiceID required by class RequestSigner
-        client = session.client("sts",region_name=self.region)
+        # Get ServiceID required by class RequestSigner
+        client = session.client("sts", region_name=self.region)
         service_id = client.meta.service_model.service_id
 
         signer = RequestSigner(

@@ -1,23 +1,24 @@
 from __future__ import print_function
-from crhelper import CfnResource
-import logging
 
-import os.path
-import yaml
+import logging
+import os
+
 import boto3
-from kubernetes import client, config, utils
+import yaml
+from crhelper import CfnResource
+from kubernetes import client, config
 from kubernetes.client.rest import ApiException
 
 import auth
 
 # Configure your cluster name and region here
 KUBE_FILEPATH = '/tmp/kubeconfig'
-CLUSTER_NAME = 'eyeem-eks-cluster-stage'
+CLUSTER_NAME = os.environ.get('CLUSTER_NAME', 'eyeem-eks-cluster-stage')
 REGION = 'eu-west-1'
 
 logger = logging.getLogger(__name__)
 # Initialise the helper, all inputs are optional, this example shows the defaults
-helper = CfnResource(json_logging=False, log_level='INFO', boto_level='DEBUG')
+helper = CfnResource(json_logging=False, log_level='INFO', boto_level='WARN')
 
 try:
     # We assume that when the Lambda container is reused, a kubeconfig file exists.
