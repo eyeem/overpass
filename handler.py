@@ -6,6 +6,8 @@ import os.path
 import yaml
 import boto3
 from kubernetes import client, config, utils
+from kubernetes.client.rest import ApiException
+
 import auth
 
 # Configure your cluster name and region here
@@ -15,7 +17,7 @@ REGION = 'eu-west-1'
 
 logger = logging.getLogger(__name__)
 # Initialise the helper, all inputs are optional, this example shows the defaults
-helper = CfnResource(json_logging=False, log_level='INFO', boto_level='ERROR')
+helper = CfnResource(json_logging=False, log_level='INFO', boto_level='DEBUG')
 
 try:
     # We assume that when the Lambda container is reused, a kubeconfig file exists.
@@ -72,16 +74,10 @@ try:
 except Exception as e:
     helper.init_failure(e)
 
-# Get Token
-eks = auth.EKSAuth(CLUSTER_NAME)
-token = eks.get_token()
-logger.info("Got the token from the EKS cluster")
-# Configure
-config.load_kube_config(KUBE_FILEPATH)
-
 
 @helper.create
 def create(event, context):
+    token = _get_token()
     logger.info("Got Create")
     properties = event.get('ResourceProperties', {})
     documents = yaml.safe_load_all(properties['yaml'])
@@ -90,12 +86,13 @@ def create(event, context):
         kind = str.lower(document['kind'])
         logger.info("ready to create a namespaced %s....." % kind)
         resp = _create_k8s_entity(kind, document, namespace, _init_k8s_client(token))
-        logger.info(resp.metadata.name)
+        logger.info(resp)
     return "ok"
 
 
 @helper.update
 def update(event, context):
+    token = _get_token()
     logger.info("Got Update")
     properties = event.get('ResourceProperties', {})
     documents = yaml.safe_load_all(properties['yaml'])
@@ -105,12 +102,13 @@ def update(event, context):
         name = document['metadata']['name']
         logger.info("ready to update a namespaced %s..... with name %s" % (kind, name))
         resp = _update_k8s_entity(kind, document, namespace, _init_k8s_client(token))
-        logger.info(resp.metadata.name)
+        logger.info(resp)
     return "ok"
 
 
 @helper.delete
 def delete(event, context):
+    token = _get_token()
     logger.info("Got Delete")
     properties = event.get('ResourceProperties', {})
     documents = yaml.safe_load_all(properties['yaml'])
@@ -118,13 +116,29 @@ def delete(event, context):
     for document in documents:
         name = document['metadata']['name']
         kind = str.lower(document['kind'])
-        _delete_k8s_entity(kind, name, namespace, _init_k8s_client(token))
+        try:
+            _delete_k8s_entity(kind, name, namespace, _init_k8s_client(token))
+        except ApiException as e:
+            if e.status == 404:
+                pass
+            else:
+                raise e
     return "ok"
 
 
 def handler(event, context):
     logger.info("Starting execution...")
     helper(event, context)
+
+
+def _get_token():
+    # Get Token
+    eks = auth.EKSAuth(CLUSTER_NAME)
+    token = eks.get_token()
+    logger.info("Got the token from the EKS cluster")
+    # Configure
+    config.load_kube_config(KUBE_FILEPATH)
+    return token
 
 
 def _init_k8s_client(token):
@@ -144,6 +158,9 @@ def _create_k8s_entity(kind, body, namespace, k8s_client):
     elif kind == 'service':
         api_instance = client.CoreV1Api(k8s_client)
         return api_instance.create_namespaced_service(body=body, namespace=namespace)
+    elif kind == 'statefulset':
+        api_instance = client.AppsV1Api(k8s_client)
+        api_instance.create_namespaced_stateful_set(namespace=namespace, body=body)
     else:
         raise RuntimeError("The kind %s is not supported by this lambda yet.")
 
@@ -166,5 +183,8 @@ def _delete_k8s_entity(kind, name, namespace, k8s_client):
     elif kind == 'service':
         api_instance = client.CoreV1Api(k8s_client)
         return api_instance.delete_namespaced_service(namespace=namespace, name=name)
+    elif kind == 'statefulset':
+        api_instance = client.AppsV1Api(k8s_client)
+        api_instance.delete_namespaced_stateful_set(namespace=namespace, name=name)
     else:
         raise RuntimeError("The kind %s is not supported by this lambda yet.")
