@@ -13,7 +13,11 @@ import auth
 
 # Configure your cluster name and region here
 KUBE_FILEPATH = '/tmp/kubeconfig'
-CLUSTER_NAME = os.environ.get('CLUSTER_NAME', 'eyeem-eks-cluster-stage')
+CLUSTER_NAME = os.environ.get('CLUSTER_NAME')
+
+if CLUSTER_NAME is None:
+    raise RuntimeError("CLUSTER_NAME env variable is not set")
+
 REGION = 'eu-west-1'
 
 logger = logging.getLogger(__name__)

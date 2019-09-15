@@ -1,4 +1,4 @@
-service: kube-deployer # NOTE: update this with your service name
+service: overpass
 
 provider:
   name: aws
@@ -23,8 +23,10 @@ provider:
       - subnet-6f63c636
       - subnet-7902820e
       - subnet-1bed767e
+  environment:
+    CLUSTER_NAME: eyeem-eks-cluster-stage
 functions:
-  kubeDeploy:
+  deploy:
     handler: handler.handler
     
 plugins:
