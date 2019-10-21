@@ -185,11 +185,8 @@ def _create_k8s_entity(kind, body, name, namespace, k8s_client):
 
 
 def _update_k8s_entity(kind, body, name, namespace, k8s_client):
-    if kind == 'deployment':
-        _delete_k8s_entity(kind, name, namespace, k8s_client)
-        return _create_k8s_entity(kind, body, name, namespace, k8s_client)
-    else:
-        raise RuntimeError("The kind %s for name %s is not supported by this lambda yet." % (kind,name))
+    _delete_k8s_entity(kind, name, namespace, k8s_client)
+    return _create_k8s_entity(kind, body, name, namespace, k8s_client)
 
 
 def _delete_k8s_entity(kind, name, namespace, k8s_client):
