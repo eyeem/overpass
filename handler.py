@@ -89,8 +89,9 @@ def create(event, context):
     namespace = properties['namespace']
     for document in documents:
         kind = str.lower(document['kind'])
-        logger.info("ready to create a namespaced %s....." % kind)
-        resp = _create_k8s_entity(kind, document, namespace, _init_k8s_client(token))
+        name = document['metadata']['name']
+        logger.info("ready to create a namespaced %s with name %s....." % (kind,name))
+        resp = _create_k8s_entity(kind, document, name, namespace, _init_k8s_client(token))
         logger.info(resp)
     return "ok"
 
@@ -153,7 +154,7 @@ def _init_k8s_client(token):
     return client.ApiClient(configuration)
 
 
-def _create_k8s_entity(kind, body, namespace, k8s_client):
+def _create_k8s_entity(kind, body, name, namespace, k8s_client):
     if kind == 'deployment':
         api_instance = client.AppsV1Api(k8s_client)
         return api_instance.create_namespaced_deployment(body=body, namespace=namespace)
@@ -165,17 +166,23 @@ def _create_k8s_entity(kind, body, namespace, k8s_client):
         return api_instance.create_namespaced_service(body=body, namespace=namespace)
     elif kind == 'statefulset':
         api_instance = client.AppsV1Api(k8s_client)
-        api_instance.create_namespaced_stateful_set(namespace=namespace, body=body)
+        return  api_instance.create_namespaced_stateful_set(namespace=namespace, body=body)
+    elif kind == 'configmap':
+        api_instance = client.CoreV1Api(k8s_client)
+        return api_instance.create_namespaced_config_map(namespace=namespace, body=body)
+    elif kind == 'secret':
+        api_instance = client.CoreV1Api(k8s_client)
+        return api_instance.create_namespaced_secret(namespace=namespace, body=body)
     else:
-        raise RuntimeError("The kind %s is not supported by this lambda yet." % kind)
+        raise RuntimeError("The kind %s for name %s is not supported by this lambda yet." % (kind,name))
 
 
 def _update_k8s_entity(kind, body, name, namespace, k8s_client):
     if kind == 'deployment':
         _delete_k8s_entity(kind, name, namespace, k8s_client)
-        return _create_k8s_entity(kind, body, namespace, k8s_client)
+        return _create_k8s_entity(kind, body, name, namespace, k8s_client)
     else:
-        raise RuntimeError("The kind %s is not supported by this lambda yet." % kind)
+        raise RuntimeError("The kind %s for name %s is not supported by this lambda yet." % (kind,name))
 
 
 def _delete_k8s_entity(kind, name, namespace, k8s_client):
@@ -191,5 +198,11 @@ def _delete_k8s_entity(kind, name, namespace, k8s_client):
     elif kind == 'statefulset':
         api_instance = client.AppsV1Api(k8s_client)
         api_instance.delete_namespaced_stateful_set(namespace=namespace, name=name)
+    elif kind == 'configmap':
+        api_instance = client.CoreV1Api(k8s_client)
+        return api_instance.delete_namespaced_config_map(namespace=namespace, name=name)
+    elif kind == 'secret':
+        api_instance = client.CoreV1Api(k8s_client)
+        return api_instance.delete_namespaced_secret(namespace=namespace, name=name)
     else:
-        raise RuntimeError("The kind %s is not supported by this lambda yet." % kind)
+        raise RuntimeError("The kind %s for name %s is not supported by this lambda yet." % (kind,name))
