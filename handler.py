@@ -91,7 +91,14 @@ def create(event, context):
         kind = str.lower(document['kind'])
         name = document['metadata']['name']
         logger.info("ready to create a namespaced %s with name %s....." % (kind,name))
-        resp = _create_k8s_entity(kind, document, name, namespace, _init_k8s_client(token))
+        try:
+            resp = _create_k8s_entity(kind, document, name, namespace, _init_k8s_client(token))
+        except ApiException as e:
+            if e.status == 409: #Resource might have been already created
+                resp = _update_k8s_entity(kind, document, namespace, _init_k8s_client(token))
+            else:
+                raise e
+
         logger.info(resp)
     return "ok"
 
