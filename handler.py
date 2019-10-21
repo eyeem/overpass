@@ -167,7 +167,7 @@ def _create_k8s_entity(kind, body, namespace, k8s_client):
         api_instance = client.AppsV1Api(k8s_client)
         api_instance.create_namespaced_stateful_set(namespace=namespace, body=body)
     else:
-        raise RuntimeError("The kind %s is not supported by this lambda yet.")
+        raise RuntimeError("The kind %s is not supported by this lambda yet." % kind)
 
 
 def _update_k8s_entity(kind, body, name, namespace, k8s_client):
@@ -175,7 +175,7 @@ def _update_k8s_entity(kind, body, name, namespace, k8s_client):
         _delete_k8s_entity(kind, name, namespace, k8s_client)
         return _create_k8s_entity(kind, body, namespace, k8s_client)
     else:
-        raise RuntimeError("The kind %s is not supported by this lambda yet.")
+        raise RuntimeError("The kind %s is not supported by this lambda yet." % kind)
 
 
 def _delete_k8s_entity(kind, name, namespace, k8s_client):
@@ -192,4 +192,4 @@ def _delete_k8s_entity(kind, name, namespace, k8s_client):
         api_instance = client.AppsV1Api(k8s_client)
         api_instance.delete_namespaced_stateful_set(namespace=namespace, name=name)
     else:
-        raise RuntimeError("The kind %s is not supported by this lambda yet.")
+        raise RuntimeError("The kind %s is not supported by this lambda yet." % kind)
