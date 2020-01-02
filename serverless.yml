@@ -2,7 +2,7 @@ service: overpass
 
 provider:
   name: aws
-  runtime: python3.7
+  runtime: python3.8
   region: eu-west-1
   iamRoleStatements:
     -  Effect: "Allow"
@@ -28,6 +28,13 @@ provider:
 functions:
   deploy:
     handler: handler.handler
-    
+
 plugins:
   - serverless-python-requirements
+
+package:
+  individually: true
+
+custom:
+  pythonRequirements:
+    usePipenv: true
