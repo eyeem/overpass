@@ -1,8 +1,8 @@
 Overpass
 ========
 
-Overpass allows you to deploy to kubernetes clusters from the Cloudformation templates, effectively acting as a overpass ;)
-Overpass deploys a lambda function in AWS which can be invoked with Kubernetes resource templates via the cloudformation. 
+Overpass allows you to deploy to kubernetes clusters from the Cloudformation templates. Overpass deploys a lambda function in AWS which can be invoked with Kubernetes resource templates via the cloudformation. 
+
 Right now, overpass only supports actions on EKS clusters.
 
 **Requirements**
