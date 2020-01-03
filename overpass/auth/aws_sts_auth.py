@@ -3,9 +3,10 @@ import re
 
 import boto3
 from botocore.signers import RequestSigner
+from overpass.auth.auth_base import AuthBase
 
 
-class EKSAuth(object):
+class AwsStsAuth(AuthBase):
     METHOD = 'GET'
     EXPIRES = 60
     EKS_HEADER = 'x-k8s-aws-id'
@@ -47,14 +48,8 @@ class EKSAuth(object):
 
         signed_url = signer.generate_presigned_url(
             params,
-            region_name='us-east-1',
+            region_name=self.region,
             expires_in=self.EXPIRES,
             operation_name=''
         )
-
-        return (
-                self.EKS_PREFIX +
-                re.sub(r'=*', '', base64.urlsafe_b64encode(
-                    signed_url.encode('utf-8')
-                ).decode('utf-8'))
-        )
+        return self.EKS_PREFIX + re.sub(r'=*', '', base64.urlsafe_b64encode(signed_url.encode('utf-8')).decode('utf-8'))
