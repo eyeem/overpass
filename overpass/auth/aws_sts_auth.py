@@ -14,9 +14,10 @@ class AwsStsAuth(AuthBase):
     STS_URL = 'sts.amazonaws.com'
     STS_ACTION = 'Action=GetCallerIdentity&Version=2011-06-15'
 
-    def __init__(self, cluster_id, region='us-east-1'):
+    def __init__(self, cluster_id):
         self.cluster_id = cluster_id
-        self.region = region
+        # For some stupid reason, the region has to be us-east-1 even though STS is region-agnostic :-/
+        self.region = 'us-east-1'
 
     def get_token(self):
         """

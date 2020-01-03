@@ -56,5 +56,6 @@ def create_kube_config(kube_filepath, eks_api, cluster_name, user_name='lambda')
 
         # Write kubeconfig
         with open(kube_filepath, 'w') as outfile:
+            LOGGER.debug(kube_content)
             yaml.dump(kube_content, outfile, default_flow_style=False)
         LOGGER.info(f"Done creating the {kube_filepath}")

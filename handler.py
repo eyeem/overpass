@@ -11,10 +11,10 @@ from overpass.kube import create_kube_config, KubeWrapper
 LOGGER = logging.getLogger(__name__)
 
 # Initialise the helper, all inputs are optional, this example shows the defaults
-helper = CfnResource(json_logging=False, log_level='DEBUG', boto_level='WARN')
+helper = CfnResource(json_logging=False, log_level='INFO', boto_level='WARN')
 
 try:
-    create_kube_config(CONFIG.KUBE_FILEPATH, boto3.client('eks', region_name=CONFIG.REGION), CONFIG.CLUSTER_NAME)
+    create_kube_config(CONFIG.KUBE_FILEPATH, boto3.client('eks', region_name=CONFIG.REGION), CONFIG.CLUSTER_NAME, CONFIG.KUBE_USER)
 except Exception as ex:
     helper.init_failure(ex)
 

@@ -4,6 +4,8 @@ from overpass.auth import AwsStsAuth, MockAuth
 from overpass.config import CONFIG
 
 LOGGER = logging.getLogger(__name__)
+#logging.getLogger("urllib3").setLevel(logging.DEBUG)
+#logging.getLogger('kubernetes').setLevel(logging.DEBUG)
 
 class KubeWrapper:
     def __init__(self, cluster_name, region, auth_backend, config_file_path):
@@ -11,7 +13,7 @@ class KubeWrapper:
 
     def _get_token(self, cluster_name, region, auth_backend):
         if auth_backend == 'AwsSTS':
-            return AwsStsAuth(cluster_name, region).get_token()
+            return AwsStsAuth(cluster_name).get_token()
         elif auth_backend == 'MockAuth':
             return MockAuth().get_token()
         else:
@@ -22,6 +24,7 @@ class KubeWrapper:
         LOGGER.debug("Succesfully retrieved token for authentication with kube api server")
         config.load_kube_config(config_file_path)
         configuration = client.Configuration()
+        #configuration.debug = True
         configuration.api_key['authorization'] = token
         configuration.api_key_prefix['authorization'] = 'Bearer'
         return client.ApiClient(configuration)

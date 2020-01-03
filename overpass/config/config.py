@@ -9,6 +9,7 @@ class Config:
         raise RuntimeError("CLUSTER_NAME env variable is not set")
     REGION = os.environ.get('AWS_REGION', 'eu-west-1')
     AUTH_BACKEND = os.environ.get('AUTH_BACKEND', 'AwsSTS')
+    KUBE_USER = os.environ.get('KUBE_USER', 'lambda')
 
 
 CONFIG = Config()

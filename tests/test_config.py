@@ -8,6 +8,7 @@ def test_config_loading():
     assert CONFIG.CLUSTER_NAME == "test-cluster"
     assert CONFIG.AUTH_BACKEND == "AwsSTS"
     assert CONFIG.REGION == "eu-west-1"
+    assert CONFIG.KUBE_USER == "lambda"
 
 
 def test_config_loading_error():
