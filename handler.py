@@ -22,7 +22,7 @@ except Exception as ex:
 def authenticate(func):
     @wraps(func)
     def wrapped(event, context):
-        kube_wrapper = KubeWrapper(CONFIG.CLUSTER_NAME, CONFIG.REGION, CONFIG.AUTH_BACKEND, CONFIG.CONFIG_FILE_PATH)
+        kube_wrapper = KubeWrapper(CONFIG.CLUSTER_NAME, CONFIG.REGION, CONFIG.AUTH_BACKEND, CONFIG.KUBE_FILEPATH)
         return func(event, context, kube_wrapper)
     return wrapped
 
