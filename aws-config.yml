@@ -1,0 +1,19 @@
+vpc_config:
+  securityGroupIds:
+    - sg-72d81c0a
+  subnetIds:
+    - subnet-6f63c636
+    - subnet-7902820e
+    - subnet-1bed767e
+iam_role_statements:
+  -  Effect: "Allow"
+     Action:
+       - "sts:GetCallerIdentity"
+     Resource:
+       - "*"
+  -  Effect: "Allow"
+     Action:
+       - "eks:DescribeCluster"
+     Resource:
+       - "*"
+aws_region: eu-west-1
