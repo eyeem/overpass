@@ -5,12 +5,11 @@ Overpass allows you to deploy to kubernetes clusters from the Cloudformation tem
 
 Right now, overpass only supports actions on EKS clusters.
 
-**Requirements**
+**Development**
 -----------
 
-* Python3
-* Serverless framework
-* crhelper https://pypi.org/project/crhelper/
+Overpass uses [pipenv](https://github.com/pypa/pipenv) for development and packaging. Refer the Pipfile for required dependencies. 
+
 
 **Deploying**
 ----
@@ -20,8 +19,16 @@ Right now, overpass only supports actions on EKS clusters.
 
 **Configuration**
 
-The overpass creates the necessary IAM roles for executing the lambda. You might have to alter the security groups and other VPC related
-config in the `serverless.yml`.
+The overpass creates the necessary IAM roles for executing the lambda. You might have to alter the security groups and other VPC related config in the `aws-config.yml`. There is a template provided to give guidance about what is required to setup the Lambda. There are also other environment variables that overpass supports:
+
+ Name | Default | Required? | Description 
+------|-----|------|------------
+CLUSTER_NAME | None | Yes | Name of the EKS cluster to operate on
+REGION | None | Yes | AWS Region
+KUBE_FILEPATH | /tmp/kubeconfig | No | File path to store the generated kube config
+AUTH_BACKEND | AwsSTS | No | Auth mechanism to use to connect securely to Kubernetes. Currently only STS is supported.
+KUBE_USER | lambda | No | Username to use when connecting to Kubernetes. This is important and should be same as the name used while configuring access in Kubernetes
+
 
 _**EKS Cluster Config**_ 
 
@@ -73,9 +80,15 @@ roleRef:
   
 
 **Testing**
-----
+-----------
 
-The deploy function can be tested locally using the following command:
+There are some unit tests which exists, and it can be invoked by:
+> pipenv shell pytest .
+
+If you don't want to be bothered with the pipenv setup and rather would can use docker like:
+> ./opts/test.sh
+
+The end to end functioniality can be tested locally using the following command:
 
 > serverless invoke local -f deploy -p test.json
 
@@ -96,4 +109,4 @@ whereas test.json can be as follows:
 }
 ```
 
-The above example mimics a Cloudformation Create action and deploys a mysql service into the kubernetes cloud into a custom namespace.
+The above example mimics a Cloudformation Create action and deploys a mysql service into the kubernetes cloud into a custom namespace. Note: change the ResponseURL to a valid HTTP endpoint which accepts a POST.
