@@ -1,0 +1,5 @@
+language: minimal
+os:
+ - linux
+script:
+ - ./opts/test.sh
