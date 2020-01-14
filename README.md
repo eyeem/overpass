@@ -1,4 +1,4 @@
-Overpass
+Overpass   [![Build Status](https://travis-ci.org/eyeem/overpass.svg?branch=master)](https://travis-ci.org/eyeem/overpass)
 ========
 
 Overpass allows you to deploy to kubernetes clusters from the Cloudformation templates. Overpass deploys a lambda function in AWS which can be invoked with Kubernetes resource templates via the cloudformation. 

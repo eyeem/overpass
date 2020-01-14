@@ -1,0 +1,4 @@
+language: minimal
+os:
+ - linux
+script: ./ops/test.sh
