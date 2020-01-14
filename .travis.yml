@@ -1,4 +1,4 @@
 language: minimal
 os:
  - linux
-script: ./opts/test.sh
+script: ./ops/test.sh
