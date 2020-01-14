@@ -76,9 +76,7 @@ def handle_delete(event, context, kube_wrapper):
         try:
             kube_wrapper.delete_k8s_entity(kind, name, namespace)
         except ApiException as ex:
-            if ex.status != 404:
-                pass
-            else:
+            if ex.status == 404:
                 raise ex
     return "ok"
 
