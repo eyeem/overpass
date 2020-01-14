@@ -1,10 +1,9 @@
 vpc_config:
   securityGroupIds:
-    - sg-72d81c0a
+    - sg-xxxxx
   subnetIds:
-    - subnet-6f63c636
-    - subnet-7902820e
-    - subnet-1bed767e
+    - subnet-xxxxx-1
+    - subnet-xxxxx-2
 iam_role_statements:
   -  Effect: "Allow"
      Action:
@@ -16,4 +15,4 @@ iam_role_statements:
        - "eks:DescribeCluster"
      Resource:
        - "*"
-aws_region: eu-west-1
+aws_region: aws-region-id
