@@ -2,4 +2,4 @@ language: minimal
 os:
  - linux
 script:
- - ./opts/test.sh
+ - bash opts/test.sh
