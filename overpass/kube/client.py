@@ -48,6 +48,9 @@ class KubeWrapper:
         elif kind == 'secret':
             api_instance = client.CoreV1Api(self.client)
             return api_instance.create_namespaced_secret(namespace=namespace, body=body)
+        elif kind == 'serviceaccount':
+            api_instance = client.CoreV1Api(self.client)
+            return api_instance.create_namespaced_service_account(namespace=namespace, body=body)
         else:
             raise RuntimeError("The kind %s for name %s is not supported by this lambda yet." % (kind,name))
 
@@ -74,5 +77,8 @@ class KubeWrapper:
         elif kind == 'secret':
             api_instance = client.CoreV1Api(self.client)
             return api_instance.delete_namespaced_secret(namespace=namespace, name=name)
+        elif kind == 'serviceaccount':
+            api_instance = client.CoreV1Api(self.client)
+            return api_instance.delete_namespaced_service_account(namespace=namespace, name=name)
         else:
             raise RuntimeError("The kind %s for name %s is not supported by this lambda yet." % (kind,name))
